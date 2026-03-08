@@ -44,4 +44,14 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+    @ExceptionHandler(InternalServerError.class)
+    public  ResponseEntity<?> internalServerErro(InternalServerError ex){
+        return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                Map.of(
+                        "timestamp",LocalDate.now(),
+                        "error","Server error",
+                        "message",ex.getMessage()
+                )
+        );
+    }
 }

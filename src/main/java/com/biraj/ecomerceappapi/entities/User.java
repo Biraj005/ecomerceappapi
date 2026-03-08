@@ -30,6 +30,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CartItem> cartItems = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private  Role role;
+    
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

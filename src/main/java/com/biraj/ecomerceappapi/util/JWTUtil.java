@@ -13,20 +13,29 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-    @Value("{jwt_secret}")
-    private  String secretKey;
+
+    private  String secretKey="birajroythisisaverysecuresecretkeyforjwt123456";
 
     public SecretKey getSecretKey(){
+
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
     public  String generateToken(User user){
         return Jwts.builder()
-                .setSubject(user.getEmail())
+                .subject(user.getEmail())
                 .claim("userId",user.getId())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()  + 1000*60*10))
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis()  + 1000*60*10))
                 .signWith(getSecretKey())
                 .compact();
     }
+    public  String extractEmail(String token){
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+        }
 
 }

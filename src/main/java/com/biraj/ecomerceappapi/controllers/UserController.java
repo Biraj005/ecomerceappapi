@@ -5,6 +5,7 @@ import com.biraj.ecomerceappapi.dto.LoginRequestDto;
 import com.biraj.ecomerceappapi.dto.LoginResponseDto;
 import com.biraj.ecomerceappapi.dto.SignUpResponseDto;
 import com.biraj.ecomerceappapi.dto.UserSignUpDto;
+import com.biraj.ecomerceappapi.entities.User;
 import com.biraj.ecomerceappapi.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,6 @@ public class UserController {
 
     private final UserService userService;
 
-
     @PostMapping("signup")
     ResponseEntity<SignUpResponseDto> signUp(@RequestBody UserSignUpDto userSignUpDto){
         SignUpResponseDto signUpResponseDto = userService.signUp(userSignUpDto);
@@ -29,8 +29,10 @@ public class UserController {
     }
 
     @PostMapping("login")
-    ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto){
-        return ResponseEntity.ok( userService.login(loginRequestDto));
+    ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
+        System.out.println("Hellow Contoller");
+        LoginResponseDto loginResponseDto = userService.login(loginRequestDto);
+        return ResponseEntity.ok(loginResponseDto);
     }
 
 }

@@ -18,13 +18,10 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/auth/**","/products/**").permitAll()
                         .anyRequest().authenticated()
                 )
-
                 .formLogin(form -> form.disable());
 
         return http.build();

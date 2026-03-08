@@ -7,9 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EcomerceappapiApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(EcomerceappapiApplication.class, args);
     }
-
-
 }
