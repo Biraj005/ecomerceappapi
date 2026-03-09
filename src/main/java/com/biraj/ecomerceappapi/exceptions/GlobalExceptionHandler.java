@@ -1,57 +1,77 @@
 package com.biraj.ecomerceappapi.exceptions;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Map;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<?> handleProductNotFound(ProductNotFoundException ex) {
+    private ResponseEntity<ErrorResponse> buildError(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request) {
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", "Product Not Found",
-                        "message", ex.getMessage()
-                ));
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message,
+                request.getRequestURI());
+
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        return buildError(HttpStatus.FORBIDDEN,
+                "You are not allowed to access this resource",
+                request);
+    }
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProductNotFound(
+            ProductNotFoundException ex,
+            HttpServletRequest request) {
+
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
     @ExceptionHandler(MissingFieldError.class)
-    public  ResponseEntity<?> handleMissingFieldError(MissingFieldError ex){
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                Map.of(
-                        "timestamp",LocalDate.now(),
-                        "error","Missing field",
-                        "message",ex.getMessage()
-                )
-        );
+    public ResponseEntity<ErrorResponse> handleMissingField(
+            MissingFieldError ex,
+            HttpServletRequest request) {
 
-
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
-
     @ExceptionHandler(AlreadyExists.class)
-    public  ResponseEntity<?> alreadyExits(AlreadyExists ex){
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                Map.of(
-                        "timestamp",LocalDate.now(),
-                        "error","Conflict",
-                        "message",ex.getMessage()
-                )
-        );
+    public ResponseEntity<ErrorResponse> handleAlreadyExists(
+            AlreadyExists ex,
+            HttpServletRequest request) {
+
+        return buildError(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
+
     @ExceptionHandler(InternalServerError.class)
-    public  ResponseEntity<?> internalServerErro(InternalServerError ex){
-        return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                Map.of(
-                        "timestamp",LocalDate.now(),
-                        "error","Server error",
-                        "message",ex.getMessage()
-                )
-        );
+    public ResponseEntity<ErrorResponse> handleInternalServerError(
+            InternalServerError ex,
+            HttpServletRequest request) {
+
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(
+            Exception ex,
+            HttpServletRequest request) {
+
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
     }
 }
