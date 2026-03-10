@@ -1,15 +1,15 @@
 package com.biraj.ecomerceappapi.controllers;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
+import com.biraj.ecomerceappapi.dto.DeleteProductResponseDto;
 import com.biraj.ecomerceappapi.dto.ProductAddRequsetDto;
 import com.biraj.ecomerceappapi.exceptions.InternalServerError;
 import com.biraj.ecomerceappapi.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.biraj.ecomerceappapi.entities.Product;
@@ -38,7 +38,7 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
    @PostMapping
-   ResponseEntity<Product> addProduct(@ModelAttribute ProductAddRequsetDto product,
+   ResponseEntity<Product> addProduct(@ModelAttribute("product") ProductAddRequsetDto product,
                                       @RequestParam("image")MultipartFile file
    , HttpServletRequest request) throws Exception {
 
@@ -54,8 +54,13 @@ public class ProductController {
 
        return  ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(product,userId,file));
 
+   }
+   @DeleteMapping("/{id}")
+    ResponseEntity<DeleteProductResponseDto> deleteProduct(@PathVariable Long id,@RequestHeader("Authorization") String token) throws AccessDeniedException {
 
-
+         Long userId = jwtUtil.extractUserId(token.substring(7));
+         productService.deleteProduct(id,userId);
+         return ResponseEntity.ok(new DeleteProductResponseDto(id,"Product with id " + id + " deleted successfully"));
    }
 
 }

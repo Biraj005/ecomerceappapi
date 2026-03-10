@@ -1,5 +1,6 @@
 package com.biraj.ecomerceappapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CartItem> cartItems = new ArrayList<>();
 

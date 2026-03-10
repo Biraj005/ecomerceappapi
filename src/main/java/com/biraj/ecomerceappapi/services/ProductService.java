@@ -4,11 +4,13 @@ import com.biraj.ecomerceappapi.entities.Category;
 import com.biraj.ecomerceappapi.entities.Product;
 import com.biraj.ecomerceappapi.exceptions.InternalServerError;
 import com.biraj.ecomerceappapi.exceptions.ProductNotFoundException;
+import com.biraj.ecomerceappapi.exceptions.UnauthorizedException;
 import com.biraj.ecomerceappapi.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 
@@ -54,4 +56,12 @@ public class ProductService {
         return productRepository.save(newProduct);
     }
 
+    public void deleteProduct(Long id, Long userId) throws AccessDeniedException {
+        Product product = productRepository.findById(id).orElseThrow(()->new ProductNotFoundException(id));
+
+        if(!product.getPublisherId().equals(userId)){
+            throw  new UnauthorizedException("You are not authorized to delete this product");
+        }
+        productRepository.delete(product);
+    }
 }

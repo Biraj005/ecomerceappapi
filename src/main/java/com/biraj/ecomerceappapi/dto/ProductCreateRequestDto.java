@@ -23,4 +23,5 @@ public class ProductCreateRequestDto {
     private List<Integer> sizes;
     private Category category;
 
+
 }

@@ -27,7 +27,12 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(error, status);
     }
-
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(
+            UnauthorizedException ex,
+            HttpServletRequest request) {
+        return buildError(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
+    }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(
             AccessDeniedException ex,
