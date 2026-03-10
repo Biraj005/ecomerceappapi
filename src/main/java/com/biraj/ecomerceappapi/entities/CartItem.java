@@ -30,8 +30,6 @@ public class CartItem {
     @Column(nullable = false)
     private Integer size;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToOne

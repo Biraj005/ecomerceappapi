@@ -44,6 +44,7 @@ public class GlobalExceptionHandler {
 
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
+
     @ExceptionHandler(MissingFieldError.class)
     public ResponseEntity<ErrorResponse> handleMissingField(
             MissingFieldError ex,
@@ -67,11 +68,16 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public  ResponseEntity<ErrorResponse> handleIlleanArgument(IllegalArgumentException ex,
+                                                               HttpServletRequest request){
+        return  buildError(HttpStatus.BAD_REQUEST,ex.getMessage(),request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(
             Exception ex,
             HttpServletRequest request) {
-
         return buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
     }
 }

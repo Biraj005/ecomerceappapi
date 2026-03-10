@@ -38,4 +38,13 @@ public class JWTUtil {
                 .getSubject();
         }
 
+    public Long extractUserId(String token) {
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("userId", Long.class);
+    }
+
 }
